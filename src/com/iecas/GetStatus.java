@@ -35,9 +35,9 @@ public class GetStatus {
         this.port = "50070";
     }
 
-     String loadJSONWithGet (String host, String port, String qry, String get) {
+     String loadJSONWithGet (String host, String port, String qry, String get) throws Exception {
         StringBuilder json = new StringBuilder();
-        try {
+//        try {
             String url = "http://" + host + ":" + port + "/jmx?get=" + qry + "::" + get;
             URL urlObject = new URL(url);
             URLConnection uc = urlObject.openConnection();
@@ -49,25 +49,25 @@ public class GetStatus {
                 json.append(inputLine);
             }
             in.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return json.toString();
     }
 
-    String setOne(String host, String port, String qry, String get) {
+    String setOne(String host, String port, String qry, String get) throws Exception {
         String value = null;
         String json = loadJSONWithGet(host, port, qry, get);
-        try {
+//        try {
             JSONObject jsonObject =  JSONObject.fromObject(json);
             String ja = jsonObject.getString("beans");
             JSONArray jsonArray =  JSONArray.fromObject(ja);
             value = jsonArray.getJSONObject(0).getString(get);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return value;
     }
 
@@ -87,49 +87,58 @@ public class GetStatus {
 
         NameNodeStatus ns = new NameNodeStatus();
 
-        String tmp = setOne(host, port, "Hadoop:service=NameNode,name=FSNamesystemState", "NumLiveDataNodes");
-        ns.setNumlivedatanodes(Integer.parseInt(tmp));
+        try {
+            String tmp = setOne(host, port, "Hadoop:service=NameNode,name=FSNamesystemState", "NumLiveDataNodes");
+            ns.setNumlivedatanodes(Integer.parseInt(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=FSNamesystemState", "NumDeadDataNodes");
-        ns.setNumdeaddatanodes(Integer.parseInt(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=FSNamesystemState", "NumDeadDataNodes");
+            ns.setNumdeaddatanodes(Integer.parseInt(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=JvmMetrics", "MemHeapUsedM");
-        ns.setMemheapusedm(Double.parseDouble(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=JvmMetrics", "MemHeapUsedM");
+            ns.setMemheapusedm(Double.parseDouble(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=JvmMetrics", "ThreadsBlocked");
-        ns.setThreadsblocked(Integer.parseInt(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=JvmMetrics", "ThreadsBlocked");
+            ns.setThreadsblocked(Integer.parseInt(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=JvmMetrics", "ThreadsWaiting");
-        ns.setThreadswaiting(Integer.parseInt(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=JvmMetrics", "ThreadsWaiting");
+            ns.setThreadswaiting(Integer.parseInt(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "Total");
-        ns.setTotal(Double.parseDouble(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "Total");
+            ns.setTotal(Double.parseDouble(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "Used");
-        ns.setUsed(Double.parseDouble(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "Used");
+            ns.setUsed(Double.parseDouble(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "PercentUsed");
-        ns.setPercentused(Double.parseDouble(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "PercentUsed");
+            ns.setPercentused(Double.parseDouble(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "BlockPoolUsedSpace");
-        ns.setBlockpoolusedspace(Double.parseDouble(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "BlockPoolUsedSpace");
+            ns.setBlockpoolusedspace(Double.parseDouble(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "TotalBlocks");
-        ns.setTotalblocks(Integer.parseInt(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "TotalBlocks");
+            ns.setTotalblocks(Integer.parseInt(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "TotalFiles");
-        ns.setTotalfiles(Integer.parseInt(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "TotalFiles");
+            ns.setTotalfiles(Integer.parseInt(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "NumberOfMissingBlocks");
-        ns.setNumberofmissingblocks(Integer.parseInt(tmp));
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "NumberOfMissingBlocks");
+            ns.setNumberofmissingblocks(Integer.parseInt(tmp));
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "LiveNodes");
-        ArrayList<String> ln = getIPAddr(tmp);
-        ns.setLivenodes(ln);
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "LiveNodes");
+            ArrayList<String> ln = getIPAddr(tmp);
+            ns.setLivenodes(ln);
 
-        tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "DeadNodes");
-        ArrayList<String> dn = getIPAddr(tmp);
-        ns.setDeadnodes(dn);
+            tmp = setOne(host, port, "Hadoop:service=NameNode,name=NameNodeInfo", "DeadNodes");
+            ArrayList<String> dn = getIPAddr(tmp);
+            ns.setDeadnodes(dn);
+
+        } catch (Exception e) {
+            ArrayList<String> nodes = new ArrayList<String>();
+            nodes.add("Don't konw.");
+            ns.setLivenodes(nodes);
+            ns.setDeadnodes(nodes);
+            System.out.println("NameNode is dead.");
+        }
 
         return ns;
     }
@@ -143,17 +152,21 @@ public class GetStatus {
                 DataNodeStatus ds = new DataNodeStatus();
                 String qry = "Hadoop:service=DataNode,name=DataNodeActivity-" + hostsname.get(i) + "-50010";
 
-                String tmp = setOne(hostsip.get(i), port, qry, "ReadBlockOpAvgTime");
-                ds.setReadblockopavgtime(Double.parseDouble(tmp));
+                try {
+                    String tmp = setOne(hostsip.get(i), port, qry, "ReadBlockOpAvgTime");
+                    ds.setReadblockopavgtime(Double.parseDouble(tmp));
 
-                tmp = setOne(hostsip.get(i), port, qry, "WriteBlockOpAvgTime");
-                ds.setWriteblockopavgtime(Double.parseDouble(tmp));
+                    tmp = setOne(hostsip.get(i), port, qry, "WriteBlockOpAvgTime");
+                    ds.setWriteblockopavgtime(Double.parseDouble(tmp));
 
-                tmp = setOne(hostsip.get(i), port, qry, "tag.Hostname");
-                ds.setHostname(tmp);
+                    tmp = setOne(hostsip.get(i), port, qry, "tag.Hostname");
+                    ds.setHostname(tmp);
 
-                ds.setIp(hostsip.get(i));
-
+                    ds.setIp(hostsip.get(i));
+                } catch (Exception e) {
+                    ds.setHostname(hostsname.get(i));
+                    ds.setIp(hostsip.get(i));
+                }
                 dss.add(ds);
             }
         }
